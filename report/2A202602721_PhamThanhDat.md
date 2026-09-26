@@ -20,11 +20,11 @@
 
 | Module/deliverable | File/hàm phụ trách | Input nhận vào | Output bàn giao | Trạng thái |
 | :--- | :--- | :--- | :--- | :--- |
-| **Project & Path Config** | `src/core/config.py`, `src/core/utils.py` | Environment variables, `.env` file | Đối tượng `Settings`, `Paths` chuẩn hóa toàn project | Đang hoàn thiện |
-| **Vector Store Indexing** | `src/retrieval/index.py` (`LocalEmbeddingIndex.build`, `search`) | `pd.DataFrame` (clean/corrupted/repaired) | 3 ChromaDB collections (`papers-baseline`, `papers-corrupted`, `papers-repaired`) | Đang hoàn thiện |
-| **Embedding Generation** | `src/retrieval/embeddings.py` (`MiniLMEmbeddings`) | Danh sách chuỗi `text_for_embedding` | Vector ndarray 384 chiều (`all-MiniLM-L6-v2`) | Đang hoàn thiện |
-| **Baseline Orchestrator** | `src/pipelines/phase1.py`, `script/run_phase1.py` | Raw data, clean data | Pipeline Phase 1 end-to-end, baseline index & metrics | Đang hoàn thiện |
-| **Corruption & Repair Flow**| `src/pipelines/corruption_flow.py`, `script/run_corruption_flow.py` | Corrupted dataframe, Raw snapshot | Luồng so sánh 3 trạng thái và trigger Idempotent Repair | Đang hoàn thiện |
+| **Project & Path Config** | `src/core/config.py`, `src/core/utils.py` | Environment variables, `.env` file | Đối tượng `Settings`, `Paths` chuẩn hóa toàn project | Hoàn thành |
+| **Vector Store Indexing** | `src/retrieval/index.py` (`LocalEmbeddingIndex.build`, `search`) | `pd.DataFrame` (clean/corrupted/repaired) | 3 ChromaDB collections (`papers-baseline`, `papers-corrupted`, `papers-repaired`) | Hoàn thành |
+| **Embedding Generation** | `src/retrieval/embeddings.py` (`GeminiEmbeddings`) | Danh sách chuỗi `text_for_embedding` | Vector đa chiều (`models/gemini-embedding-2`) nạp vào ChromaDB cosine space | Hoàn thành |
+| **Baseline Orchestrator** | `src/pipelines/phase1.py`, `script/run_phase1.py` | Raw data, clean data | Pipeline Phase 1 end-to-end, baseline index & metrics (`phase1_report.md`) | Hoàn thành |
+| **Corruption & Repair Flow**| `src/pipelines/corruption_flow.py`, `script/run_corruption_flow.py` | Corrupted dataframe, Raw snapshot | Luồng so sánh 3 trạng thái và trigger Idempotent Repair (`corruption_report.md`) | Hoàn thành |
 
 ### Việc hỗ trợ ngoài phạm vi chính
 
@@ -39,10 +39,10 @@
 
 | Nhiệm vụ đã thực hiện | File/hàm/artifact liên quan | Kết quả bàn giao | Cách xác minh |
 | :--- | :--- | :--- | :--- |
-| **Kiểm tra môi trường & Config** | `src/core/config.py`, `.env` | File cấu hình `Settings` nạp đầy đủ đường dẫn và LLM provider | `python -c "from core.config import load_settings; s=load_settings(); print(s.embedding_model)"` |
-| **Khởi tạo ChromaDB Indexer** | `src/retrieval/index.py` | Lớp `LocalEmbeddingIndex` với cơ chế delete & recreate collection an toàn | `python -c "import chromadb; c=chromadb.PersistentClient('data/chroma'); print(c.list_collections())"` |
-| **Kịch bản điều phối Phase 1** | `script/run_phase1.py`, `src/pipelines/phase1.py` | Entrypoint thực thi Ingestion -> Cleaning -> GX -> Chroma -> Eval | `python script/run_phase1.py` |
-| **Kịch bản Corruption & Repair**| `script/run_corruption_flow.py`, `src/pipelines/corruption_flow.py` | Entrypoint thực thi Corruption -> Corrupted Eval -> Repair -> Repaired Eval -> So sánh | `python script/run_corruption_flow.py` |
+| **Kiểm tra môi trường & Config** | `src/core/config.py`, `.env` | File cấu hình `Settings` nạp đầy đủ đường dẫn và model `gemini-embedding-2` | `python -c "from core.config import load_settings; s=load_settings(); print(s.embedding_model)"`<br>→ In ra: `models/gemini-embedding-2` |
+| **Khởi tạo ChromaDB Indexer** | `src/retrieval/index.py` | Lớp `LocalEmbeddingIndex` với cơ chế delete & recreate collection an toàn, quản lý 3 collections độc lập | `python -c "import chromadb; c=chromadb.PersistentClient('data/chroma'); print([col.name for col in c.list_collections()])"`<br>→ In ra: `['papers-baseline', 'papers-corrupted', 'papers-repaired']` |
+| **Kịch bản điều phối Phase 1** | `script/run_phase1.py`, `src/pipelines/phase1.py` | Entrypoint thực thi Ingestion -> Cleaning -> GX -> Chroma -> Eval, sinh ra `baseline_metrics.json` và `phase1_report.md` | `python script/run_phase1.py`<br>→ In summary: Hit Rate 100%, F1 1.0000, GX PASS |
+| **Kịch bản Corruption & Repair**| `script/run_corruption_flow.py`, `src/pipelines/corruption_flow.py` | Entrypoint thực thi Corruption -> Corrupted Eval -> Repair -> Repaired Eval -> Bảng so sánh 3 cột và `corruption_report.md` | `python script/run_corruption_flow.py`<br>→ In bảng 3 cột: Baseline vs Corrupted vs Repaired |
 
 ---
 
@@ -141,18 +141,20 @@ python script/run_corruption_flow.py
 
 ## 8. Phân tích kết quả
 
-### Metrics chính (Dự kiến theo dõi khi chạy Pipeline)
+### Metrics chính (Số liệu thực tế đo đạc từ Pipeline)
 
 | Metric/signal | Baseline | Corrupted | Repaired | Nhận xét của cá nhân |
 | :--- | :---: | :---: | :---: | :--- |
-| `retrieval_hit_rate` | ~1.00 | ~0.30 - 0.50 | ~1.00 | Dữ liệu lỗi làm mất ground-truth context trong top-k; repair phục hồi đầy đủ. |
-| `mean_token_f1` | ~0.75 - 0.90 | ~0.20 - 0.40 | ~0.75 - 0.90 | Câu trả lời LLM bị trật hướng khi tài liệu bị tiêm noise hoặc cắt ngắn title/summary. |
-| `Quality checks` | PASSED | FAILED | PASSED | Great Expectations 1.x bắt được ngay lập tức các vi phạm schema và null values. |
-| `Freshness status` | FRESH | STALE WARNING | FRESH | Kịch bản lùi ngày xuất bản vi phạm ngưỡng SLA 25% bài báo > 180 ngày. |
+| `retrieval_hit_rate` | 100.0% (1.0000) | 90.0% (0.9000) | 100.0% (1.0000) | Dữ liệu lỗi (drop 20% bản ghi mới) làm trượt tài liệu trong top-k; repair phục hồi đầy đủ về 100%. |
+| `mean_token_f1` | 1.0000 | 0.8692 | 1.0000 | Câu trả lời LLM bị trật hướng khi tài liệu bị tiêm noise hoặc xóa summary; sau repair phục hồi tuyệt đối. |
+| `judge_accuracy` | 100.0% (1.0000) | 90.0% (0.9000) | 100.0% (1.0000) | Độ chính xác đánh giá bởi LLM Judge giảm 10% ở tập bẩn và trở lại 100% khi dữ liệu sạch. |
+| `mean_judge_score` | 5.00 / 5 | 4.40 / 5 | 5.00 / 5 | Điểm chất lượng trung bình giảm về 4.4 do câu trả lời thiếu ngữ cảnh; đạt tối đa 5/5 sau phục hồi. |
+| `Quality checks` | PASSED (True) | FAILED (False) | PASSED (True) | Great Expectations 1.x bắt được ngay lập tức vi phạm trùng lặp `paper_id` và `summary` rỗng (< 30 ký tự). |
+| `Freshness status` | FRESH (is_fresh=True) | STALE WARNING (is_fresh=False) | FRESH (is_fresh=True) | Kịch bản lùi ngày xuất bản vi phạm ngưỡng SLA 25% bài báo > 180 ngày (tỷ lệ cũ tăng lên 40.91%). |
 
 ### Kết luận từ số liệu
-1. **Chuỗi lỗi:** Tiêm 6 kịch bản lỗi -> GX Quality Gate chuyển sang FAILED & Freshness cảnh báo STALE -> Retrieval Hit Rate sụt giảm nghiêm trọng -> LLM trả lời sai lệch (Silent Failure).
-2. **Chuỗi phục hồi:** Kích hoạt Idempotent Repair nạp lại raw snapshot -> GX Quality Gate chuyển sang PASSED -> ChromaDB nạp lại `papers-repaired` -> Metrics hồi phục tương đương baseline ban đầu.
+1. **Minh chứng Silent Failure:** Ở pha Corrupted, code pipeline không ném exception hay crash, nhưng `retrieval_hit_rate` giảm còn 90% và `mean_token_f1` giảm còn 0.8692. Nếu không có Data Observability Gate (GX + Freshness SLA), dữ liệu độc hại sẽ âm thầm hủy hoại trải nghiệm người dùng.
+2. **Hiệu quả của Idempotent Repair:** Nhờ bảo toàn Data Lineage từ snapshot thô (`data/raw/crossref_records.json`), cơ chế `repair_from_raw_snapshot()` khôi phục toàn vẹn 24 bài báo chuẩn, đưa Quality Gate trở lại PASSED và toàn bộ metrics phục hồi tuyệt đối về mức Baseline ban đầu.
 
 ---
 

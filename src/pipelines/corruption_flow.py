@@ -1,34 +1,19 @@
-# from __future__ import annotations
-
-
-# def main() -> None:
-#     """TODO(student): xay dung corruption -> evaluate -> repair -> compare flow.
-
-#     Pseudo-code:
-#     1. Load baseline metrics va clean dataset.
-#     2. Tao corrupted dataframe.
-#     3. Save corrupted artifacts.
-#     4. Rebuild index va evaluate.
-#     5. Run quality checks/freshness tren corrupted data.
-#     6. Repair lai tu raw records.
-#     7. Evaluate repaired dataset.
-#     8. Tao comparison report.
-#     """
-    
-#     # raise NotImplementedError("Student task: implement corruption flow pipeline.")
-
 from __future__ import annotations
+
+from datetime import UTC, datetime
 from typing import Any
+
 import pandas as pd
-from ingestion.crossref import load_raw_records, parse_crossref_payload
+
 from core.config import Settings, load_settings
 from core.utils import now_utc, read_json, write_csv, write_json
 from evaluation.metrics import evaluate_pipeline
+from ingestion.cleaning import build_clean_dataframe
 from ingestion.corruption import corrupt_clean_dataframe
+from ingestion.crossref import load_raw_records, parse_crossref_payload
 from observability.quality import run_data_quality_checks
 from observability.reporting import generate_corruption_report
 from retrieval.index import LocalEmbeddingIndex
-from ingestion.cleaning import build_clean_dataframe
 
 COMPARISON_METRIC_KEYS: tuple[str, ...] = (
     "samples",
@@ -39,10 +24,9 @@ COMPARISON_METRIC_KEYS: tuple[str, ...] = (
 )
 
 
- 
 def repair_from_raw_snapshot(settings: Settings, run_date: datetime | None = None) -> pd.DataFrame:
     """Phuc hoi du lieu sach mot cach idempotent tu snapshot raw ban dau.
- 
+
     Doc lai `data/raw/crossref_records.json` (hoac fallback
     `data/raw/crossref_response.json` neu file records chua ton tai), chay lai
     `build_clean_dataframe` va ghi de len `data/clean/papers_clean_repaired.*`.
@@ -50,21 +34,21 @@ def repair_from_raw_snapshot(settings: Settings, run_date: datetime | None = Non
     / idempotent bat ke du lieu hien tai da bi lam ban ra sao.
     """
     run_date = run_date or now_utc()
- 
+
     raw_records_path = settings.paths.raw_records_json
     if raw_records_path.exists():
         records = load_raw_records(raw_records_path)
     else:
         payload = read_json(settings.paths.raw_api_response)
         records = parse_crossref_payload(payload)
- 
+
     repaired_df = build_clean_dataframe(records, run_date)
- 
+
     write_csv(repaired_df, settings.paths.repaired_clean_csv)
     write_json(settings.paths.repaired_clean_json, repaired_df.to_dict(orient="records"))
- 
+
     return repaired_df
- 
+
 def _fmt(value: Any) -> str:
     if isinstance(value, float):
         return f"{value:.4f}"
@@ -75,16 +59,21 @@ def _print_comparison_table(baseline: dict, corrupted: dict, repaired: dict) -> 
     columns = ["Metric", "Baseline", "Corrupted", "Repaired"]
     widths = [22, 14, 14, 14]
     header = "".join(col.ljust(w) for col, w in zip(columns, widths))
+    print("\n" + "=" * len(header))
+    print("PHASE 2: 3-STATE PERFORMANCE COMPARISON TABLE")
+    print("=" * len(header))
     print(header)
     print("-" * len(header))
     for key in COMPARISON_METRIC_KEYS:
         row = [key, _fmt(baseline.get(key)), _fmt(corrupted.get(key)), _fmt(repaired.get(key))]
         print("".join(str(cell).ljust(w) for cell, w in zip(row, widths)))
-    print()
+    print("-" * len(header))
     print(
-        f"Data Quality Gate -> Corrupted success={corrupted.get('quality_success')} "
+        f"Data Quality Gate -> Baseline success={baseline.get('quality_success', True)} "
+        f"| Corrupted success={corrupted.get('quality_success')} "
         f"| Repaired success={repaired.get('quality_success')}"
     )
+    print("=" * len(header))
 
 
 def run_corruption_flow_pipeline(settings: Settings) -> dict[str, Any]:
@@ -105,6 +94,11 @@ def run_corruption_flow_pipeline(settings: Settings) -> dict[str, Any]:
     # --- 0. Nap baseline artifacts da sinh boi Phase 1 ----------------------
     baseline_metrics = read_json(settings.paths.baseline_metrics)
     baseline_df = pd.read_json(settings.paths.clean_json)
+    baseline_quality = (
+        read_json(settings.paths.baseline_quality_report)
+        if settings.paths.baseline_quality_report.exists()
+        else {}
+    )
 
     # --- 1. Corrupt -> index -> evaluate (quan sat Silent Failure) ---------
     corrupted_df = corrupt_clean_dataframe(baseline_df, settings.paths.corruption_log)
@@ -148,6 +142,8 @@ def run_corruption_flow_pipeline(settings: Settings) -> dict[str, Any]:
         repaired_quality=repaired_quality,
         corrupted_freshness=corrupted_quality["freshness"],
         repaired_freshness=repaired_quality["freshness"],
+        baseline_quality=baseline_quality,
+        baseline_freshness=baseline_quality.get("freshness", {}),
     )
 
     result = {
@@ -159,7 +155,7 @@ def run_corruption_flow_pipeline(settings: Settings) -> dict[str, Any]:
     }
 
     _print_comparison_table(
-        baseline_metrics,
+        {**baseline_metrics, "quality_success": baseline_quality.get("success", True)},
         {**corrupted_bundle.summary, "quality_success": corrupted_quality["success"]},
         {**repaired_bundle.summary, "quality_success": repaired_quality["success"]},
     )
