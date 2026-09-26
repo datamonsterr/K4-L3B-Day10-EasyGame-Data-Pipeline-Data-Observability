@@ -1,0 +1,115 @@
+{
+  "stage": "baseline",
+  "row_count": 24,
+  "gx_success": true,
+  "is_fresh": true,
+  "success": true,
+  "expectations": [
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "success": true,
+      "kwargs": {
+        "min_value": 5,
+        "max_value": 5000
+      },
+      "result": {
+        "observed_value": 24
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "success": true,
+      "kwargs": {
+        "column": "paper_id"
+      },
+      "result": {
+        "element_count": 24,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "partial_unexpected_list": [],
+        "partial_unexpected_counts": [],
+        "partial_unexpected_index_list": []
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "success": true,
+      "kwargs": {
+        "column": "paper_id"
+      },
+      "result": {
+        "element_count": 24,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "partial_unexpected_list": [],
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unexpected_percent_total": 0.0,
+        "unexpected_percent_nonmissing": 0.0,
+        "partial_unexpected_counts": [],
+        "partial_unexpected_index_list": []
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "success": true,
+      "kwargs": {
+        "column": "title"
+      },
+      "result": {
+        "element_count": 24,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "partial_unexpected_list": [],
+        "partial_unexpected_counts": [],
+        "partial_unexpected_index_list": []
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "success": true,
+      "kwargs": {
+        "column": "text_for_embedding"
+      },
+      "result": {
+        "element_count": 24,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "partial_unexpected_list": [],
+        "partial_unexpected_counts": [],
+        "partial_unexpected_index_list": []
+      }
+    },
+    {
+      "expectation_type": "expect_column_value_lengths_to_be_between",
+      "success": true,
+      "kwargs": {
+        "column": "summary",
+        "min_value": 30,
+        "max_value": 20000
+      },
+      "result": {
+        "element_count": 24,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "partial_unexpected_list": [],
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unexpected_percent_total": 0.0,
+        "unexpected_percent_nonmissing": 0.0,
+        "partial_unexpected_counts": [],
+        "partial_unexpected_index_list": []
+      }
+    }
+  ],
+  "freshness": {
+    "total_rows": 24,
+    "stale_rows": 1,
+    "stale_ratio": 0.0417,
+    "freshness_threshold_days": 180,
+    "stale_ratio_threshold": 0.25,
+    "is_fresh": true,
+    "latest_published": "2026-07-22",
+    "oldest_published": "2026-03-28"
+  }
+}
