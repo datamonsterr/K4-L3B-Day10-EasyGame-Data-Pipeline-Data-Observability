@@ -20,14 +20,15 @@
 from __future__ import annotations
 from typing import Any
 import pandas as pd
-
+from ingestion.crossref import load_raw_records, parse_crossref_payload
 from core.config import Settings, load_settings
 from core.utils import now_utc, read_json, write_csv, write_json
 from evaluation.metrics import evaluate_pipeline
-from ingestion.corruption import corrupt_clean_dataframe, repair_from_raw_snapshot
+from ingestion.corruption import corrupt_clean_dataframe
 from observability.quality import run_data_quality_checks
 from observability.reporting import generate_corruption_report
 from retrieval.index import LocalEmbeddingIndex
+from ingestion.cleaning import build_clean_dataframe
 
 COMPARISON_METRIC_KEYS: tuple[str, ...] = (
     "samples",
@@ -38,6 +39,32 @@ COMPARISON_METRIC_KEYS: tuple[str, ...] = (
 )
 
 
+ 
+def repair_from_raw_snapshot(settings: Settings, run_date: datetime | None = None) -> pd.DataFrame:
+    """Phuc hoi du lieu sach mot cach idempotent tu snapshot raw ban dau.
+ 
+    Doc lai `data/raw/crossref_records.json` (hoac fallback
+    `data/raw/crossref_response.json` neu file records chua ton tai), chay lai
+    `build_clean_dataframe` va ghi de len `data/clean/papers_clean_repaired.*`.
+    Vi luon xuat phat tu cung mot raw snapshot, ket qua repair la deterministic
+    / idempotent bat ke du lieu hien tai da bi lam ban ra sao.
+    """
+    run_date = run_date or now_utc()
+ 
+    raw_records_path = settings.paths.raw_records_json
+    if raw_records_path.exists():
+        records = load_raw_records(raw_records_path)
+    else:
+        payload = read_json(settings.paths.raw_api_response)
+        records = parse_crossref_payload(payload)
+ 
+    repaired_df = build_clean_dataframe(records, run_date)
+ 
+    write_csv(repaired_df, settings.paths.repaired_clean_csv)
+    write_json(settings.paths.repaired_clean_json, repaired_df.to_dict(orient="records"))
+ 
+    return repaired_df
+ 
 def _fmt(value: Any) -> str:
     if isinstance(value, float):
         return f"{value:.4f}"

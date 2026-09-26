@@ -1,0 +1,96 @@
+{
+  "timestamp": "2026-09-26T04:19:11.671842+00:00",
+  "total_original_rows": 24,
+  "total_corrupted_rows": 22,
+  "corruption_scenarios": [
+    {
+      "scenario": "drop_latest",
+      "name": "Drop latest records",
+      "count": 4,
+      "affected_paper_ids": [
+        "10.1145/3637528.3671812",
+        "10.1145/3637528.3671808",
+        "10.1145/3637528.3671804",
+        "10.1145/3637528.3671807"
+      ],
+      "description": "B\u1ecf r\u01a1i 4 b\u00e0i b\u00e1o m\u1edbi nh\u1ea5t (16.7%) m\u00f4 ph\u1ecfng s\u1ef1 c\u1ed1 m\u1ea5t d\u1eef li\u1ec7u t\u01b0\u01a1i"
+    },
+    {
+      "scenario": "blank_summary",
+      "name": "Blank summary",
+      "count": 2,
+      "affected_paper_ids": [
+        "10.1145/3637528.3671802",
+        "10.1145/3637528.3671824"
+      ],
+      "description": "X\u00f3a tr\u1eafng t\u00f3m t\u1eaft 2 d\u00f2ng m\u00f4 ph\u1ecfng l\u1ed7i c\u00e0o d\u1eef li\u1ec7u r\u1ed7ng (vi ph\u1ea1m ExpectColumnValueLengthsToBeBetween)"
+    },
+    {
+      "scenario": "inject_noise",
+      "name": "Inject noise",
+      "count": 2,
+      "affected_paper_ids": [
+        "10.1145/3637528.3671823",
+        "10.1145/3637528.3671822"
+      ],
+      "noise_pattern": "[CORRUPTED_DATA_NOISE_#$!@%^&*] ",
+      "description": "Ch\u00e8n chu\u1ed7i k\u00fd t\u1ef1 r\u00e1c v\u00e0o t\u00f3m t\u1eaft c\u1ee7a 2 d\u00f2ng m\u00f4 ph\u1ecfng nhi\u1ec5u k\u00fd t\u1ef1"
+    },
+    {
+      "scenario": "truncate_title",
+      "name": "Truncate title",
+      "count": 2,
+      "affected_paper_ids": [
+        "10.1145/3637528.3671821",
+        "10.1145/3637528.3671810"
+      ],
+      "details": [
+        {
+          "paper_id": "10.1145/3637528.3671821",
+          "original_title": "Advanced Perspectives on Chunking Strategies for Technical Documentation Retrieval",
+          "truncated_title": "Advanc"
+        },
+        {
+          "paper_id": "10.1145/3637528.3671810",
+          "original_title": "Automated Data Quality Profiling with Great Expectations in CI/CD",
+          "truncated_title": "Automa"
+        }
+      ],
+      "description": "C\u1eaft ng\u1eafn ti\u00eau \u0111\u1ec1 2 b\u00e0i b\u00e1o xu\u1ed1ng d\u01b0\u1edbi 8 k\u00fd t\u1ef1"
+    },
+    {
+      "scenario": "stale_date",
+      "name": "Stale date",
+      "count": 8,
+      "affected_paper_ids": [
+        "10.1145/3637528.3671820",
+        "10.1145/3637528.3671819",
+        "10.1145/3637528.3671818",
+        "10.1145/3637528.3671817",
+        "10.1145/3637528.3671816",
+        "10.1145/3637528.3671815",
+        "10.1145/3637528.3671814",
+        "10.1145/3637528.3671813"
+      ],
+      "days_shifted": 365,
+      "description": "L\u00f9i ng\u00e0y xu\u1ea5t b\u1ea3n 8 d\u00f2ng v\u1ec1 365 ng\u00e0y tr\u01b0\u1edbc \u0111\u1ec3 vi ph\u1ea1m Freshness SLA (> 25% b\u00e0i c\u0169)"
+    },
+    {
+      "scenario": "duplicate_rows",
+      "name": "Duplicate rows",
+      "count": 2,
+      "affected_paper_ids": [
+        "10.1145/3637528.3671802",
+        "10.1145/3637528.3671824"
+      ],
+      "description": "Nh\u00e2n \u0111\u00f4i 2 d\u00f2ng t\u1ea1o tr\u00f9ng l\u1eb7p paper_id (vi ph\u1ea1m ExpectColumnValuesToBeUnique)"
+    }
+  ],
+  "summary": {
+    "scenarios_applied": 6,
+    "original_rows": 24,
+    "corrupted_rows": 22,
+    "dropped_rows": 4,
+    "duplicated_rows": 2
+  }
+}
