@@ -1,0 +1,92 @@
+[
+  {
+    "id": "eval_001",
+    "question_type": "summary",
+    "question": "What is the summary of the paper 'Agentic Retrieval-Augmented Generation for Knowledge-Intensive Tasks'?",
+    "ground_truth": "Retrieval-Augmented Generation (RAG) significantly improves large language model accuracy by grounding responses in retrieved passages.",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671801"
+    ]
+  },
+  {
+    "id": "eval_002",
+    "question_type": "authors",
+    "question": "Who authored the paper 'Mitigating Ghost Vectors in Dense Retrieval via Idempotent Indexing'?",
+    "ground_truth": "Duc Vu, Thao Dang",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671803"
+    ]
+  },
+  {
+    "id": "eval_003",
+    "question_type": "date",
+    "question": "When was the paper 'Evaluating Retrieval Precision with Token F1 and LLM Judges' published?",
+    "ground_truth": "2026-03-28",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671805"
+    ]
+  },
+  {
+    "id": "eval_004",
+    "question_type": "categories",
+    "question": "What categories does the paper 'Multi-Agent Consensus for High-Stakes Fact Verification' belong to?",
+    "ground_truth": "Multi-Agent Systems, Artificial Intelligence",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671808"
+    ]
+  },
+  {
+    "id": "eval_005",
+    "question_type": "summary",
+    "question": "What is the summary of the paper 'Automated Data Quality Profiling with Great Expectations in CI/CD'?",
+    "ground_truth": "Embedding quality checks directly into data pipelines enables fail-closed governance.",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671810"
+    ]
+  },
+  {
+    "id": "eval_006",
+    "question_type": "authors",
+    "question": "Who authored the paper 'Advanced Perspectives on Agentic Retrieval-Augmented Generation for Knowledge-Intensive Tasks'?",
+    "ground_truth": "Minh Nguyen, Hoang Le",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671813"
+    ]
+  },
+  {
+    "id": "eval_007",
+    "question_type": "date",
+    "question": "When was the paper 'Advanced Perspectives on Mitigating Ghost Vectors in Dense Retrieval via Idempotent Indexing' published?",
+    "ground_truth": "2026-06-03",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671815"
+    ]
+  },
+  {
+    "id": "eval_008",
+    "question_type": "categories",
+    "question": "What categories does the paper 'Advanced Perspectives on Evaluating Retrieval Precision with Token F1 and LLM Judges' belong to?",
+    "ground_truth": "Natural Language Processing, Evaluation Methodology",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671817"
+    ]
+  },
+  {
+    "id": "eval_009",
+    "question_type": "summary",
+    "question": "What is the summary of the paper 'Advanced Perspectives on Multi-Agent Consensus for High-Stakes Fact Verification'?",
+    "ground_truth": "An extended empirical study on single LLM is susceptible to confirmation bias when evaluating retrieved evidence.",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671820"
+    ]
+  },
+  {
+    "id": "eval_010",
+    "question_type": "authors",
+    "question": "Who authored the paper 'Advanced Perspectives on Automated Data Quality Profiling with Great Expectations in CI/CD'?",
+    "ground_truth": "Son Nguyen, Thuy Doan",
+    "ground_truth_doc_ids": [
+      "10.1145/3637528.3671822"
+    ]
+  }
+]
