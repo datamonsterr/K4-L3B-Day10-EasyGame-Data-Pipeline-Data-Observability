@@ -70,13 +70,14 @@ Crossref API
 
 | Biến/cấu hình             | Giá trị sử dụng |
 | ---------------------------- | ------------------- |
-| `LLM_PROVIDER`             | [Giá trị]         |
-| `LLM_MODEL`                | [Giá trị]         |
-| Embedding model              | [Giá trị]         |
-| Số lượng Crossref records | [Giá trị]         |
-| Retrieval`top_k`           | [Giá trị]         |
-| Freshness threshold          | [Giá trị]         |
-| Random seed, nếu có        | [Giá trị]         |
+| `LLM_PROVIDER`             | `gemini`         |
+| `LLM_MODEL`                | `gemini-3.5-flash`         |
+| Embedding model              | `models/gemini-embedding-2` (Gemini Embedding 2, thay thế `sentence-transformers` sau hotfix)         |
+| Số lượng Crossref records | 24 (`max_results = 24`)         |
+| Retrieval`top_k`           | 4         |
+| Freshness threshold          | 180 ngày (ngưỡng stale ratio 25%)         |
+| Random seed, nếu có        | Không sử dụng random seed cố định — dữ liệu Crossref được snapshot sẵn trong `data/raw/`, không fetch ngẫu nhiên khi chạy lại         |
+ 
 
 Không dán nội dung API key hoặc file `.env` vào báo cáo.
 
