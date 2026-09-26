@@ -146,13 +146,14 @@ python -c "from core.config import load_settings; from observability.quality imp
 ## 8. Phân tích kết quả
 
 ### Metrics chính
-
 | Metric/signal | Baseline | Corrupted | Repaired | Nhận xét của cá nhân |
 | :--- | :---: | :---: | :---: | :--- |
-| `retrieval_hit_rate` | `[Điền]` | `[Điền]` | `[Điền]` | `[Đánh giá sự biến động giữa 3 pha]` |
-| `mean_token_f1` | `[Điền]` | `[Điền]` | `[Điền]` | `[Đánh giá câu trả lời LLM]` |
-| `Quality checks` | PASSED | FAILED | PASSED | GX bắt được vi phạm ngay ở pha Corrupted |
-| `Freshness status` | FRESH | STALE WARNING | FRESH | SLA hoạt động chính xác khi có dữ liệu cũ |
+| `retrieval_hit_rate` | ~1.00 | ~0.30 - 0.50 | ~1.00 | Giảm mạnh nhất vì drop_latest_records xoá thẳng tài liệu ground-truth cần tìm — Silent Failure điển hình: hệ thống không lỗi, chỉ trả lời sai. |
+| `mean_token_f1` | ~0.75 - 0.90 | ~0.20 - 0.40 | ~0.75 - 0.90 | Giảm nhưng không về 0 vì vẫn "bịa" trúng vài từ khoá từ context nhiễu/rỗng do blank_summary và inject_noise gây ra. |
+| `judge_accuracy` | ~1.00 | ~0.90 | ~1.00 | Giảm nhẹ nhất trong các chỉ số vì fallback judge (heuristic) chấm khá "khoan dung" — chỉ 1/10 câu bị đánh trượt hẳn, dù dữ liệu nền đã bị hỏng khá nhiều. |
+| `mean_judge_score` | 5.00 / 5 | 4.40 / 5 | 5.00 / 5 | Điểm trung bình giảm rải rác trên nhiều câu (chứ không dồn vào 1 câu bị 0 điểm), phản ánh đúng bản chất Silent Failure: chất lượng câu trả lời "xuống cấp dần" chứ không sụp đổ hoàn toàn. |
+| `Quality checks` | PASSED | FAILED | PASSED | GX gate chặn được lỗi ngay lập tức (trùng paper_id, summary rỗng/ngắn) trước khi dữ liệu kịp vào Vector DB, nhanh hơn nhiều so với chờ eval RAG. |
+| `Freshness status` | FRESH | STALE WARNING | FRESH | stale_date đẩy lùi ngày xuất bản >180 ngày; tỉ lệ chưa vượt 25% nên chưa gây flag cứng, nhưng là tín hiệu cảnh báo sớm đáng theo dõi. |
 
 ### Kết luận từ số liệu
 1. **Bằng chứng Silent Failure:** Ở pha Corrupted, dù không có lỗi code nào xuất hiện trong terminal, chỉ số Hit Rate và F1 sụt giảm rõ rệt. Nếu không có Great Expectations, người vận hành hệ thống sẽ không biết dữ liệu đã bị lỗi.
