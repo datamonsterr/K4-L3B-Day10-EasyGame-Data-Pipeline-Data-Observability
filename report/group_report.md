@@ -82,14 +82,6 @@ Không dán nội dung API key hoặc file `.env` vào báo cáo.
 
 ### Lệnh cài đặt
 
-Chỉ giữ lại cách nhóm đã dùng.
-
-```bash
-uv sync
-```
-
-Hoặc:
-
 ```bash
 python -m pip install -e .
 ```
@@ -99,22 +91,10 @@ python -m pip install -e .
 Baseline:
 
 ```bash
-uv run python script/run_phase1.py
-```
-
-Hoặc với môi trường `pip` đã kích hoạt:
-
-```bash
 python script/run_phase1.py
 ```
 
 Corruption flow:
-
-```bash
-uv run python script/run_corruption_flow.py
-```
-
-Hoặc với môi trường `pip` đã kích hoạt:
 
 ```bash
 python script/run_corruption_flow.py
@@ -124,8 +104,8 @@ python script/run_corruption_flow.py
 
 | Lệnh             | Trạng thái                                    | Thời điểm chạy gần nhất | Bằng chứng                         |
 | ----------------- | ----------------------------------------------- | ----------------------------- | ------------------------------------ |
-| Baseline pipeline | [Thành công/Thất bại một phần/Thất bại] | [Thời gian]                  | [Artifact hoặc log đã che secret] |
-| Corruption flow   | [Thành công/Thất bại một phần/Thất bại] | [Thời gian]                  | [Artifact hoặc log đã che secret] |
+| Baseline pipeline | Thành công | 10:45                  | `data/reports/phase1_report.md` |
+| Corruption flow   | Thành công | 12:44                  | `data/reports/corruption_report.md` |
 
 ## 5. Ingestion, cleaning và data contract
 
@@ -180,22 +160,22 @@ Giải thích vì sao test set được giữ nguyên khi đánh giá baseline, 
 
 | Artifact                 | Đường dẫn thực tế                | Trạng thái | Ghi chú   |
 | ------------------------ | -------------------------------------- | ------------ | ---------- |
-| Raw response/records     | `data/raw/`                          | [Có/Thiếu] | [Ghi chú] |
-| Cleaned dataset          | `data/clean/`                        | [Có/Thiếu] | [Ghi chú] |
-| Embedding manifest/index | `data/embeddings/`                   | [Có/Thiếu] | [Ghi chú] |
-| Evaluation set           | `data/eval/`                         | [Có/Thiếu] | [Ghi chú] |
-| Baseline metrics         | `data/results/baseline_metrics.json` | [Có/Thiếu] | [Ghi chú] |
-| Quality/freshness        | `data/quality/`                      | [Có/Thiếu] | [Ghi chú] |
-| Baseline report          | `data/reports/phase1_report.md`      | [Có/Thiếu] | [Ghi chú] |
+| Raw response/records     | `data/raw/`                          | Có | [Ghi chú] |
+| Cleaned dataset          | `data/clean/`                        | Có | [Ghi chú] |
+| Embedding manifest/index | `data/embeddings/`                   | Có | [Ghi chú] |
+| Evaluation set           | `data/eval/`                         | Có | [Ghi chú] |
+| Baseline metrics         | `data/results/baseline_metrics.json` | Có | [Ghi chú] |
+| Quality/freshness        | `data/quality/`                      | Có | [Ghi chú] |
+| Baseline report          | `data/reports/phase1_report.md`      | Có | [Ghi chú] |
 
 ### Baseline metrics
 
 | Metric                 |       Giá trị | Diễn giải                             |
 | ---------------------- | --------------: | --------------------------------------- |
-| `retrieval_hit_rate` |     [Giá trị] | [Ý nghĩa trong kết quả của nhóm]  |
-| `mean_token_f1`      |     [Giá trị] | [Diễn giải]                           |
-| `judge_accuracy`     |     [Giá trị] | [Diễn giải]                           |
-| `mean_judge_score`   |     [Giá trị] | [Diễn giải]                           |
+| `retrieval_hit_rate` |     1.0000 | [Ý nghĩa trong kết quả của nhóm]  |
+| `mean_token_f1`      |     1.0000 | [Diễn giải]                           |
+| `judge_accuracy`     |     1.0000 | [Diễn giải]                           |
+| `mean_judge_score`   |     5.00 / 5 | [Diễn giải]                           |
 | Ragas, nếu có        | [Giá trị/N/A] | [Diễn giải hoặc lý do không chạy] |
 
 ## 8. Data quality và freshness
