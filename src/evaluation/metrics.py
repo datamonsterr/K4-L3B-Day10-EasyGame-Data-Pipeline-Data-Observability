@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 
 from core.config import Settings
 from core.utils import normalize_whitespace, read_json, write_json
-from retrieval.embeddings import MiniLMEmbeddings
+from retrieval.embeddings import GeminiEmbeddings
 from retrieval.index import LocalEmbeddingIndex
 from retrieval.llm import build_llm
 from retrieval.qa import answer_question
@@ -93,7 +93,7 @@ def _run_ragas(settings: Settings, answers: list[dict[str, Any]]) -> dict[str, A
             dataset,
             metrics=[answer_relevancy, context_precision, context_recall, faithfulness],
             llm=build_llm(settings=settings, temperature=0.0),
-            embeddings=MiniLMEmbeddings(settings.embedding_model),
+            embeddings=GeminiEmbeddings(settings.embedding_model),
         )
         return dict(result)
     except Exception as exc:  # pragma: no cover
