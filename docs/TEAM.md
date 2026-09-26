@@ -10,9 +10,9 @@
 
 | STT | Họ và tên | MSSV | Email | Vai trò & Phân công công việc | Báo cáo cá nhân |
 |---:|---|---|---|---|---|
-| 1 | Phạm Thành Đạt | 2A202602721 | | **Member 1 (Trưởng nhóm / Pipeline Integrator & Vector Store):** Quản lý cấu hình (`core/config.py`, `core/utils.py`), ChromaDB vector collections (`retrieval/index.py`, `retrieval/embeddings.py`), điều phối luồng end-to-end (`pipelines/phase1.py`, `pipelines/corruption_flow.py`, `script/`), theo dõi Git commit nhánh `main`. | `report/2A202602721_PhamThanhDat.md` |
-| 2 | Nguyễn Tiến Đạt | 2A202602970 | | **Member 2 (Data Engineering & Corruption):** Thu thập dữ liệu API & offline fallback (`ingestion/crossref.py`), làm sạch & chuẩn hóa embedding (`ingestion/cleaning.py`), giả lập 6 kịch bản lỗi dữ liệu (`ingestion/corruption.py`), phục hồi dữ liệu từ raw snapshot. | `report/2A202602970_NguyenTienDat.md` |
-| 3 | Ngô Hoàng Thụy Khuê | 2A202603017 | | **Member 3 (Observability, Evaluation & Reporting):** Thiết lập Quality Gate Great Expectations 1.x & Freshness SLA (`observability/quality.py`), tạo bộ benchmark test set 10 câu hỏi (`evaluation/testset.py`), xuất báo cáo markdown đối chiếu 3 trạng thái (`observability/reporting.py`). | `report/2A202603017_NgoHoangThuyKhue.md` |
+| 1 | Phạm Thành Đạt | 2A202602721 | phamthanhdat17092004@gmail.com | **Member 1 (Trưởng nhóm / Pipeline Integrator & Vector Store):** Quản lý cấu hình (`core/config.py`, `core/utils.py`), ChromaDB vector collections (`retrieval/index.py`, `retrieval/embeddings.py`), điều phối luồng end-to-end (`pipelines/phase1.py`, `pipelines/corruption_flow.py`, `script/`), theo dõi Git commit nhánh `main`. | `report/2A202602721_PhamThanhDat.md` |
+| 2 | Nguyễn Tiến Đạt | 2A202602970 | dn841746@gmail.com | **Member 2 (Data Engineering & Corruption):** Thu thập dữ liệu API & offline fallback (`ingestion/crossref.py`), làm sạch & chuẩn hóa embedding (`ingestion/cleaning.py`), giả lập 6 kịch bản lỗi dữ liệu (`ingestion/corruption.py`), phục hồi dữ liệu từ raw snapshot. | `report/2A202602970_NguyenTienDat.md` |
+| 3 | Ngô Hoàng Thụy Khuê | 2A202603017 | khuengo.work@gmail.com | **Member 3 (Observability, Evaluation & Reporting):** Thiết lập Quality Gate Great Expectations 1.x & Freshness SLA (`observability/quality.py`), tạo bộ benchmark test set 10 câu hỏi (`evaluation/testset.py`), xuất báo cáo markdown đối chiếu 3 trạng thái (`observability/reporting.py`). | `report/2A202603017_NgoHoangThuyKhue.md` |
 
 ---
 
