@@ -1,24 +1,35 @@
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 
+import google.generativeai as genai
 from langchain_core.embeddings import Embeddings
-from sentence_transformers import SentenceTransformer
 
 
 @lru_cache(maxsize=4)
-def _load_model(model_name: str) -> SentenceTransformer:
-    return SentenceTransformer(model_name)
+def _get_client() -> genai.Client:
+    api_key = os.environ.get("GOOGLE_API_KEY")
+    return genai.Client(api_key=api_key)
 
 
-class MiniLMEmbeddings(Embeddings):
-    def __init__(self, model_name: str):
-        self.model = _load_model(model_name)
+class GeminiEmbeddings(Embeddings):
+    """Embeddings backed by Google's text-embedding-004 (Gemini Embedding 2) model."""
+
+    def __init__(self, model_name: str = "models/text-embedding-004"):
+        self.model_name = model_name
+        self._client = _get_client()
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
-        embeddings = self.model.encode(texts, normalize_embeddings=True)
-        return embeddings.tolist()
+        result = self._client.models.embed_content(
+            model=self.model_name,
+            contents=texts,
+        )
+        return [e.values for e in result.embeddings]
 
     def embed_query(self, text: str) -> list[float]:
-        embedding = self.model.encode([text], normalize_embeddings=True)
-        return embedding[0].tolist()
+        result = self._client.models.embed_content(
+            model=self.model_name,
+            contents=[text],
+        )
+        return result.embeddings[0].values
